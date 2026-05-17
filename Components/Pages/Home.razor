@@ -1,10 +1,14 @@
-﻿@page "/"
+@page "/"
 
-
-
-a=<input type="number" @bind-value="a" /><br />
-b=<input type="number" @bind-value="b" /><br />
-c=<input type="number" @bind-value="c" /><br />
+a=
+<input type="number" @bind-value="a" />
+<br />
+b=
+<input type="number" @bind-value="b" />
+<br />
+c=
+<input type="number" @bind-value="c" />
+<br />
 <button @onclick="Draw">Draw</button>
 
 
@@ -19,22 +23,9 @@ c=<input type="number" @bind-value="c" /><br />
     double b = 1;
     double c = 1;
 
+
     string data = "";
     int width = 250, height = 550;
-    Parabula p = new Parabula(a, b, c);
-    Point[] arr = p.Getpoints();
-    int scale = 250 / 20;
-    for (int i = 0; i < arr.Length; i++) 
-    {
-        double screenX = (arr[i].Getx() * scale) + (width / 2);
-        double screenY = (height / 2) - (arr[i].Gety() * scale);
-
-        data += @$"<circle cx=""{screenX}"" cy=""{screenY}"" r=""2"" fill=""red"" />";
-    }
-
-
-   
-
 
 
     void Draw()
@@ -43,7 +34,8 @@ c=<input type="number" @bind-value="c" /><br />
         Point[] arr = p.Getpoints();
         for (int i = 0; i < arr.Length; i++)
         {
-            data += @$"<circle cx=""{(arr[i].getx()+10)*12.5}"" cy=""{(-arr[i].gety()+10)*27.5}"" r=""1"" />";
+            data += $@"<circle cx=""{(arr[i].getx() + 10) * 12.5}"" cy=""{(-arr[i].gety() + 10) * 27.5}"" r=""1"" />";
         }
     }
 }
+
