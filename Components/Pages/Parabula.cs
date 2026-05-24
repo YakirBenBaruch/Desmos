@@ -196,13 +196,13 @@
         {
             Point[] Points = new Point[1000];
 
-            double x = -500;
+            double x = -10;
 
             for (int i = 0; i < Points.Length; i++)
             {
                 double y = this.GetY(x);
                 Points[i] = new Point(x, y);
-                x++;
+                x = x + 0.02;
             }
 
             return Points;
