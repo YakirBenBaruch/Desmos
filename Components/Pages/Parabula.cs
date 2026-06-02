@@ -194,7 +194,7 @@
 
         public Point[] Getpoints()
         {
-            Point[] Points = new Point[1000];
+            Point[] Points = new Point[3000];
 
             double x = -10;
 

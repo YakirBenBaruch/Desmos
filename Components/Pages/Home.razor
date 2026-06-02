@@ -6,7 +6,7 @@
 
         <div class="side-panel">
             <h1>Parabola Drawer</h1>
-            <p class="subtitle">y = ax² + bx + c</p>
+            <p class="subtitle">Draw multiple parabolas</p>
 
             <div class="input-box">
                 <label>Value of a</label>
@@ -23,19 +23,38 @@
                 <input type="number" @bind-value="c" />
             </div>
 
-            <button @onclick="Draw">Draw</button>
+            <div class="input-box color-box">
+                <label>Choose Parabola Color</label>
+
+                <div class="color-row">
+                    <input type="color" @bind="selectedColor" />
+                    <span>@selectedColor</span>
+                </div>
+            </div>
+
+            <button class="color-btn" @onclick="ChangeColor">Change Color</button>
+            <button class="draw-btn" @onclick="Draw">Add Parabola</button>
             <button class="clear-btn" @onclick="ClearGraph">Clear Graph</button>
 
             <div class="formula-card">
                 <span>Current function:</span>
                 <strong>y = @a x² + @b x + @c</strong>
             </div>
+
+            <div class="info-card">
+                <span>Parabolas on graph:</span>
+                <strong>@parabolaCount</strong>
+            </div>
         </div>
 
         <div class="graph-area">
 
             <div class="top-bar">
-                <h2>Graph</h2>
+                <div>
+                    <h2>Graph</h2>
+                    <p>Each click adds a new parabola</p>
+                </div>
+
                 <span>500 × 500</span>
             </div>
 
@@ -44,12 +63,25 @@
 
                     @((MarkupString)grid)
 
-                    <line x1="0" y1="250" x2="500" y2="250" stroke="#222" stroke-width="2" />
-                    <line x1="250" y1="0" x2="250" y2="500" stroke="#222" stroke-width="2" />
+                    <line x1="0" y1="250" x2="500" y2="250" stroke="#111827" stroke-width="2" />
+                    <line x1="250" y1="0" x2="250" y2="500" stroke="#111827" stroke-width="2" />
 
                     @((MarkupString)data)
 
                 </svg>
+            </div>
+
+            <div class="values-area">
+                <h3>Interesting Values</h3>
+
+                @if (valuesData == "")
+                {
+                    <p class="empty-text">No parabolas yet. Add a parabola to see values.</p>
+                }
+                else
+                {
+                    @((MarkupString)valuesData)
+                }
             </div>
 
         </div>
@@ -61,7 +93,7 @@
 <style>
     .page {
         min-height: 100vh;
-        background-color: #f3f4f7;
+        background: linear-gradient(135deg, #e0f2fe, #f8fafc);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -71,41 +103,42 @@
     }
 
     .app {
-        width: 1000px;
+        width: 1100px;
         background-color: white;
-        border-radius: 18px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+        border-radius: 22px;
+        box-shadow: 0 15px 40px rgba(15, 23, 42, 0.22);
         overflow: hidden;
         display: flex;
-        border: 1px solid #ddd;
+        border: 1px solid #e5e7eb;
     }
 
     .side-panel {
-        width: 300px;
-        background-color: #ffffff;
-        border-right: 1px solid #ddd;
+        width: 320px;
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
+        border-right: 1px solid #e5e7eb;
         padding: 25px;
         box-sizing: border-box;
     }
 
         .side-panel h1 {
             margin: 0;
-            color: #1f2937;
-            font-size: 26px;
+            color: #111827;
+            font-size: 28px;
         }
 
     .subtitle {
         margin-top: 8px;
         color: #6b7280;
-        font-size: 17px;
+        font-size: 16px;
     }
 
     .input-box {
-        margin-top: 22px;
-        background-color: #f9fafb;
+        margin-top: 18px;
+        background-color: #ffffff;
         border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        padding: 12px;
+        border-radius: 14px;
+        padding: 13px;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
     }
 
     label {
@@ -128,60 +161,106 @@
 
         input:focus {
             outline: none;
-            border-color: #2d70b3;
-            box-shadow: 0 0 0 3px rgba(45, 112, 179, 0.15);
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+    .color-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+        .color-row input[type="color"] {
+            width: 65px;
+            height: 45px;
+            padding: 4px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .color-row span {
+            color: #374151;
+            font-weight: bold;
+            font-size: 15px;
+            background-color: #f1f5f9;
+            padding: 10px 12px;
+            border-radius: 10px;
         }
 
     button {
         width: 100%;
-        margin-top: 18px;
-        background-color: #2d70b3;
+        margin-top: 14px;
         color: white;
         border: none;
         padding: 13px;
-        border-radius: 10px;
-        font-size: 18px;
+        border-radius: 12px;
+        font-size: 17px;
         cursor: pointer;
         font-weight: bold;
+        transition: 0.2s;
     }
 
         button:hover {
-            background-color: #245a91;
+            transform: translateY(-1px);
+        }
+
+    .draw-btn {
+        background-color: #2563eb;
+    }
+
+        .draw-btn:hover {
+            background-color: #1d4ed8;
+        }
+
+    .color-btn {
+        background-color: #7c3aed;
+    }
+
+        .color-btn:hover {
+            background-color: #5b21b6;
         }
 
     .clear-btn {
-        margin-top: 10px;
-        background-color: #e63946;
+        background-color: #dc2626;
     }
 
         .clear-btn:hover {
-            background-color: #c92f3b;
+            background-color: #b91c1c;
         }
 
-    .formula-card {
-        margin-top: 25px;
-        background-color: #f1f5f9;
-        border-left: 5px solid #2d70b3;
+    .formula-card,
+    .info-card {
+        margin-top: 20px;
+        background-color: #f8fafc;
+        border-left: 5px solid #2563eb;
         padding: 15px;
-        border-radius: 10px;
+        border-radius: 12px;
         color: #1f2937;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
     }
 
-        .formula-card span {
+    .info-card {
+        border-left-color: #7c3aed;
+    }
+
+        .formula-card span,
+        .info-card span {
             display: block;
             font-size: 14px;
             color: #6b7280;
             margin-bottom: 6px;
         }
 
-        .formula-card strong {
+        .formula-card strong,
+        .info-card strong {
             font-size: 18px;
         }
 
     .graph-area {
         flex: 1;
-        background-color: #fafafa;
-        padding: 25px;
+        background-color: #f9fafb;
+        padding: 28px;
         box-sizing: border-box;
     }
 
@@ -189,18 +268,29 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 15px;
+        margin-bottom: 18px;
     }
 
         .top-bar h2 {
             margin: 0;
-            color: #1f2937;
-            font-size: 24px;
+            color: #111827;
+            font-size: 26px;
+        }
+
+        .top-bar p {
+            margin: 5px 0 0 0;
+            color: #6b7280;
+            font-size: 14px;
         }
 
         .top-bar span {
-            color: #6b7280;
+            color: #374151;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            padding: 8px 12px;
+            border-radius: 10px;
             font-size: 14px;
+            font-weight: bold;
         }
 
     .svg-box {
@@ -208,15 +298,57 @@
         height: 500px;
         background-color: white;
         border: 1px solid #cfd4dc;
-        border-radius: 8px;
+        border-radius: 14px;
         overflow: hidden;
         margin: auto;
-        box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.08);
+        box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.08), 0 10px 25px rgba(15, 23, 42, 0.12);
     }
 
     svg {
         display: block;
         background-color: white;
+    }
+
+    .values-area {
+        margin-top: 25px;
+        background-color: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    }
+
+        .values-area h3 {
+            margin: 0 0 15px 0;
+            color: #111827;
+            font-size: 22px;
+        }
+
+    .value-card {
+        border: 1px solid #e5e7eb;
+        border-left: 6px solid;
+        border-radius: 12px;
+        padding: 14px;
+        margin-top: 12px;
+        background-color: #f8fafc;
+    }
+
+        .value-card h4 {
+            margin: 0 0 8px 0;
+            color: #111827;
+            font-size: 17px;
+        }
+
+        .value-card p {
+            margin: 6px 0;
+            color: #374151;
+            font-size: 15px;
+        }
+
+    .empty-text {
+        color: #6b7280;
+        margin: 0;
+        font-size: 15px;
     }
 </style>
 
@@ -228,16 +360,22 @@
 
     string data = "";
     string grid = "";
+    string valuesData = "";
+
+    string selectedColor = "#c74440";
+    string parabolaColor = "#c74440";
+
+    int parabolaCount = 0;
 
     int width = 500;
     int height = 500;
 
     void Draw()
     {
-        data = "";
-        grid = "";
-
-        DrawGrid();
+        if (grid == "")
+        {
+            DrawGrid();
+        }
 
         Parabula p = new Parabula(a, b, c);
         Point[] arr = p.Getpoints();
@@ -248,9 +386,64 @@
                         cx=""{(arr[i].Getx() * 20) + 250}""
                         cy=""{(-arr[i].Gety() * 20) + 250}""
                         r=""1""
-                        fill=""#c74440"">
+                        fill=""{parabolaColor}"">
                        </circle>";
         }
+
+        parabolaCount++;
+        AddInterestingValues();
+    }
+
+    void ChangeColor()
+    {
+        parabolaColor = selectedColor;
+    }
+
+    void AddInterestingValues()
+    {
+        double yCut = c;
+        string xCutText = "";
+
+        if (a == 0)
+        {
+            if (b == 0)
+            {
+                xCutText = "No X cutting point";
+            }
+            else
+            {
+                double x = -c / b;
+                xCutText = $"X cutting point: ({x:0.##}, 0)";
+            }
+        }
+        else
+        {
+            double delta = (b * b) - (4 * a * c);
+
+            if (delta < 0)
+            {
+                xCutText = "No X cutting points";
+            }
+            else if (delta == 0)
+            {
+                double x = -b / (2 * a);
+                xCutText = $"X cutting point: ({x:0.##}, 0)";
+            }
+            else
+            {
+                double x1 = (-b + Math.Sqrt(delta)) / (2 * a);
+                double x2 = (-b - Math.Sqrt(delta)) / (2 * a);
+
+                xCutText = $"X cutting points: ({x1:0.##}, 0), ({x2:0.##}, 0)";
+            }
+        }
+
+        valuesData += $@"
+            <div class=""value-card"" style=""border-left-color:{parabolaColor}"">
+                <h4>Parabola {parabolaCount}: y = {a}x² + {b}x + {c}</h4>
+                <p><strong>Y cutting point:</strong> (0, {yCut:0.##})</p>
+                <p><strong>{xCutText}</strong></p>
+            </div>";
     }
 
     void DrawGrid()
@@ -272,5 +465,7 @@
     {
         data = "";
         grid = "";
+        valuesData = "";
+        parabolaCount = 0;
     }
 }
